@@ -3,9 +3,12 @@
 Run 7-fold cross-validation using a YAML config.
 
 Usage:
-    python run_cv.py --config configs/cv_7_3heads.yaml
+    python run_cv.py --config configs/config.yaml
     uv run run_cv.py --config configs/config.yaml
 """
+
+import sys, pathlib
+sys.path.append(str(pathlib.Path(__file__).resolve().parents[1]))
 import argparse
 import sys
 import yaml

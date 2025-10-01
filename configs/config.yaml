@@ -1,5 +1,5 @@
 # Directories
-labels_path: "../tables/internal_data_split_with_vlm_image_report.xlsx"
+labels_path: "../tables/internal_data_split_clean_with_vlm_image_report.xlsx"
 img_dir: "../../PrimaryBoneTumor16Class/Data/boundingboxes_all"
 save_dir: "./7CV-3Heads"
 
