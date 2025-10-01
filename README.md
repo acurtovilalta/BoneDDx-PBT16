@@ -29,7 +29,7 @@ uv sync
 
   * `split` ∈ {`TRAIN`, `TEST`} (explicit split respected by the trainer)
   * `entity` (string class name; mapped across folds)
-  * Auxiliary attribute columns—named exactly as listed in aux_cols (e.g., lesion_pattern, cortical_destruction, periosteal_reaction)—must be present in the labels file. Each column should contain the predefined categorical strings plus UNK to denote uncertainty/absence. These radiographic attributes are weak labels automatically extracted from paired radiographs and reports using a vision–language model (VLM); see the manuscript for the VLM pipeline and prompt design. Note: the expected column names and vocabularies are currently hard-coded, sorry.
+  * Auxiliary attribute columns—named exactly as listed in `aux_cols` (e.g., `lesion_pattern`, `cortical_destruction`, `periosteal_reaction`): must be present in the labels file. Each column should contain the predefined categorical strings plus `UNK` to denote uncertainty/absence. These radiographic attributes are weak labels automatically extracted from paired radiographs and reports using a vision–language model (VLM); see the manuscript for the VLM pipeline and prompt design. Note: the expected column names and vocabularies are currently hard-coded, sorry.
 
 * An **image directory** (`img_dir`) containing the radiograph crops that `XrayDatasetMTL` knows how to resolve (via a filename path column. Ensure your dataset class and labels file agree on this).
 
