@@ -1,0 +1,39 @@
+[project]
+name = "boneddx-pbt16"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "openpyxl>=3.1.5",
+  "pandas>=2.3.2",
+  "pillow>=10.4.0", # your 11.x pin is likely invalid
+  "torch==2.4.1",
+  "torchaudio==2.4.1",
+  "torchvision==0.19.1",
+  "tqdm>=4.67.1",
+  "transformers==4.44.2",
+  "accelerate>=0.34",
+  "huggingface-hub>=0.24,<1",
+  "safetensors>=0.4.5",
+  "einops>=0.8.0",
+  "timm>=0.9.16,<1.0",
+  "numpy==2.2.6",
+  "scipy==1.14.1",
+  "scikit-learn==1.6.1",
+  "wandb>=0.21.1",
+  "plotly>=6.3.0",
+  "holoviews>=1.21.0",
+  "umap-learn>=0.5.9.post2",
+  "xlsxwriter>=3.2.5",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=6.30.1",
+]
+
+[tool.uv.workspace]
+members = [
+    "BoneDDx-PBT16",
+]
