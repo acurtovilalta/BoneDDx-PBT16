@@ -9,10 +9,11 @@ import torch.nn as nn
 from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 from losses import FocalLoss
-from dataset import XrayDatasetMTL
-from model import MultiTaskModel
+from datasets.dataset import XrayDatasetMTL
+from models.model import MultiTaskModel
 from utils import *
 from metrics import *
+from eval import _eval_and_save
 
 # ==============================
 # One-fold train/eval
@@ -202,14 +203,6 @@ def train_one_fold(cfg, fold_idx, df_tr, df_va, df_test,
     state = torch.load(ckpt_path, map_location=device)
     model.load_state_dict(state['model_state_dict'])
 
-    def _eval_and_save(loader, split_name):
-        out = eval_main_loader(model, loader, device, num_classes, entities)
-        # save report
-        report_path = os.path.join(base_out_dir, f"fold{fold_idx+1}_{split_name}_report.txt")
-        with open(report_path, "w", encoding="utf-8") as f:
-            f.write(out["report"])
-        return {k: v for k, v in out.items() if k != "report"}
-
     val_metrics  = _eval_and_save(val_loader,  "VAL")
     test_metrics = _eval_and_save(test_loader, "TEST")
 
@@ -255,7 +248,7 @@ def cross_validate(cfg):
     base_out = os.path.join(cfg["save_dir"], "folds")
     os.makedirs(base_out, exist_ok=True)
 
-    # 5-fold CV on TRAINALL
+    # 7-fold CV on TRAINALL
     skf = StratifiedKFold(n_splits=7, shuffle=True, random_state=cfg["split_seed"])
     X_idx = np.arange(len(df_trainall))
     y_cls = df_trainall['entity'].to_numpy()
@@ -266,7 +259,7 @@ def cross_validate(cfg):
     all_test = { "accuracy": [], "balanced_accuracy": [], "recall_macro": [], "recall_weighted": [], "f1_macro": [] }
 
     for fold_idx, (tr_idx, va_idx) in enumerate(skf.split(X_idx, y_cls)):
-        print(f"\n========== Fold {fold_idx+1}/5 ==========")
+        print(f"\n========== Fold {fold_idx+1}/7 ==========")
         df_tr = df_trainall.iloc[tr_idx].copy()
         df_va = df_trainall.iloc[va_idx].copy()
 
@@ -320,61 +313,3 @@ def cross_validate(cfg):
         print(f"\nSaved summaries to:\n  {per_fold_csv}\n  {agg_csv}\n  {out_xlsx}")
     except Exception as e:
         print(f"\nSaved summaries to:\n  {per_fold_csv}\n  {agg_csv}\n(Excel export failed: {e})")
-
-
-# ==============================
-# Config
-# ==============================
-
-CFG = {
-    "labels_path": "../tables/internal_data_split_with_vlm_image_report.xlsx",
-    "img_dir": "../../PrimaryBoneTumor16Class/Data/boundingboxes_all",
-    "save_dir": "./CV-7-3Heads",
-
-    # CV & device
-    "split_seed": 42,
-    "device": "cuda:0",
-
-    # training control
-    "max_epochs": 150,
-    "patience": 50,
-    "batch_size": 32,
-    "num_workers": 4,
-    "img_size": 224,
-
-    # model / loss / optim
-    "img_emb_size": 512,
-    "dropout": 0.2246108301788256,
-    "label_smoothing": 0.07256863426168171,
-    "lr": 0.0001,
-    "weight_decay": 0.00001,
-    "step_size": 7,
-    "gamma": 0.8,
-    "grad_clip_norm": 2.0,
-
-    # auxiliary
-    "aux_cols": ["lesion_pattern", "cortical_destruction", "periosteal_reaction"],
-    "aux_weight": 0.19032676947212063,
-    "aux_anneal_epochs": 40,
-    "aux_detach": True, #False,         
-
-    # focal loss for aux heads
-    "use_focal_aux": True,
-    "focal_gamma": 2.0,
-
-    # augmentations
-    "aug_scale_min": 0.8,
-    "aug_ratio_min": 0.9,
-    "aug_ratio_max": 1.1,
-    "aug_hflip_p": 0.5,
-    "aug_brightness": 0.4,
-    "aug_contrast": 0.4,
-    "aug_rotation": 10.0,
-    "aug_translate": 0.05,
-    "aug_shear": 5.0,
-    "aug_erasing_p": 0.25,
-}
-
-
-if __name__ == "__main__":
-    cross_validate(CFG)

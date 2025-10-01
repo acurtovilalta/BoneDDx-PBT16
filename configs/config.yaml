@@ -1,0 +1,50 @@
+# Directories
+labels_path: "../tables/internal_data_split_with_vlm_image_report.xlsx"
+img_dir: "../../PrimaryBoneTumor16Class/Data/boundingboxes_all"
+save_dir: "./7CV-3Heads"
+
+# CV & device
+split_seed: 42
+device: "cuda:0"
+
+# training control
+max_epochs: 150
+patience: 50
+batch_size: 32
+num_workers: 4
+img_size: 224
+
+# model / loss / optim
+img_emb_size: 512
+dropout: 0.2246108301788256
+label_smoothing: 0.07256863426168171
+lr: 0.0001
+weight_decay: 0.00001
+step_size: 7
+gamma: 0.8
+grad_clip_norm: 2.0
+
+# auxiliary
+aux_cols:
+  - "lesion_pattern"
+  - "cortical_destruction"
+  - "periosteal_reaction"
+aux_weight: 0.19032676947212063
+aux_anneal_epochs: 40
+aux_detach: true
+
+# focal loss for aux heads
+use_focal_aux: true
+focal_gamma: 2.0
+
+# augmentations
+aug_scale_min: 0.8
+aug_ratio_min: 0.9
+aug_ratio_max: 1.1
+aug_hflip_p: 0.5
+aug_brightness: 0.4
+aug_contrast: 0.4
+aug_rotation: 10.0
+aug_translate: 0.05
+aug_shear: 5.0
+aug_erasing_p: 0.25
